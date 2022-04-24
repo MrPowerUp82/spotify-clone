@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/all.css">
+    <link rel="stylesheet" href="css/fontawesome.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <title>Spotify</title>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-wrapper">
+
+            <div class="sidebar_logo">
+                <img src="img/logo.png" />
+            </div>
+
+            <div class="sidebar_menu">
+                <a href="#" class="sidebar_menu__selected"><i class="fas fa-home"></i>Início</a>
+                <a href="#"><i class="fas fa-search"></i>Pesquisar</a>
+                <a href="#"><i class="fas fa-database"></i>Biblioteca</a>
+            </div>
+
+            <div class="sidebar_menu">
+                <p class="sidebar_menu__title">Playlists</p>
+                <div class="sidebar_menu__item">
+                    <div class="sidebar_menu__component">
+                        +
+                    </div>
+                    <span>Criar Playlist</span>
+                </div>
+
+                <div class="sidebar_menu__item">
+                    <div class="sidebar_menu__component__img">
+                        <img src="img/curtidas.png"/>
+                    </div>
+                    <span>Músicas Curtidas</span>
+                </div>
+            </div>
+
+            <div class="sidebar_playlist">
+                <a href="#">Playlist</a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="main-wrapper">
+            <div class="main_row">
+                <div class="main_row__title"><h2>Test</h2></div>
+                <div class="main_col">
+                    <img src="img/playlist.png"/>
+                    <h3>As 50 mais tocadas.</h3>
+                    <p>Aqui vai a descrição.</p>
+                </div>
+                <div class="main_col">
+                    <img src="img/playlist.png"/>
+                    <h3>As 50 mais tocadas.</h3>
+                    <p>Aqui vai a descrição.</p>
+                </div>
+                <div class="main_col">
+                    <img src="img/playlist.png"/>
+                    <h3>As 50 mais tocadas.</h3>
+                    <p>Aqui vai a descrição.</p>
+                </div>
+                <div class="main_col">
+                    <img src="img/playlist.png"/>
+                    <h3>As 50 mais tocadas.</h3>
+                    <p>Aqui vai a descrição.</p>
+                </div>
+                <div class="main_col">
+                    <img src="img/playlist.png"/>
+                    <h3>As 50 mais tocadas.</h3>
+                    <p>Aqui vai a descrição.</p>
+                </div>
+            </div>
+            <div class="main_row">
+                <div class="main_row__title"><h2>Top</h2></div>
+                <div class="main_col" data-title="Monster" data-artist="skillet" data-image="img/playlist.png" data-file="assets/skillet.mp3">
+                    <img src="img/playlist.png"/>
+                    <h3>Monster</h3>
+                    <p>Aqui vai a descrição.</p>
+                </div>
+                <div class="main_col" data-title="A horse with no name" data-artist="America" data-image="img/horse.png" data-file="assets/music.mp3">
+                    <img src="img/horse.png"/>
+                    <h3>A Horse With No Name</h3>
+                    <p>Aqui vai a descrição.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audioplayer" controls="all" style="position:absolute; top:0; left:0; display:none;">
+
+    </audio>
+
+    <div class="player">
+        <div class="player_artist">
+
+        </div>
+        <div class="player_control">
+            <div class="player_control__buttons">
+                <a href="#"><i class="fas fa-backward"></i></a>
+                <a href="#" id="playBtn"><i class="far fa-play-circle"></i></a>
+                <a href="#" id="pauseBtn" style="display: none;"><i class="far fa-pause-circle"></i></a>
+                <a href="#"><i class="fas fa-forward"></i></a>
+            </div>
+
+            <!-- <div class="player_control__progress">
+                <div class="progress_bar" style="width:75%">
+
+                </div>
+            </div> -->
+
+            <input class="player_control__progress slider" id="slider" type="range" min="0" max="100" value="0" onchange="controlPos(this.value)" />
+        </div>
+
+        <div class="player_sound">
+            <i class="fa-solid fa-volume-high"></i>
+            <input class="slider2" id="slider2" type="range" min="0" max="100" value="100" onchange="controlVol(this.value)" />
+        </div>
+    </div>
+    <script src="js/fontawesome.js"></script>
+    <script src="js/all.js"></script>
+    <script>
+        let audioplayer = document.querySelector('#audioplayer');
+        let loaded = false;
+        let playBtn = document.querySelector('#playBtn');
+        let pauseBtn = document.querySelector('#pauseBtn');
+        let selected = false;
+        let timer
+        let slider = document.querySelector('#slider')
+
+        pauseBtn.addEventListener('click', (e)=>{
+            e.preventDefault();
+            if (selected){
+                clearInterval(timer)
+                playBtn.style.display = 'inline';
+                pauseBtn.style.display = 'none'
+                audioplayer.pause();
+            }
+            return false;
+        })
+
+        playBtn.addEventListener('click', (e)=>{
+            e.preventDefault();
+            if (selected){
+                playBtn.style.display = 'none';
+                pauseBtn.style.display = 'inline'
+                audioplayer.play();
+                timer = setInterval(()=>{
+                    slider.max = audioplayer.duration
+                    slider.value = audioplayer.currentTime
+                }, 1000)
+            }
+            return false;
+        })
+
+        const playSong= (file) =>{
+            audioplayer.innerHTML = `
+            <source src="${file}" type="audio/mp3" />
+            `
+
+            audioplayer.load()
+            audioplayer.play();
+        }
+
+        document.querySelectorAll('.main_col').forEach(item=>{
+            item.addEventListener('click', event=>{
+                selected = true
+                clearInterval(timer)
+                let image = item.getAttribute('data-image')
+                let title = item.getAttribute('data-title')
+                let file = item.getAttribute('data-file')
+                let artist = item.getAttribute('data-artist')
+
+                let playerArtist = document.querySelector('.player_artist')
+
+                playerArtist.innerHTML = `
+                <img src="${image}" />
+                <h3>${title}<br><span>${artist}</span></h3>
+                `
+                playBtn.style.display = 'none';
+                pauseBtn.style.display = 'inline'
+                playSong(file);
+                timer = setInterval(()=>{
+                    slider.max = audioplayer.duration
+                    slider.value = audioplayer.currentTime
+                }, 1000)
+            })
+        })
+
+        function controlVol(value) {
+            audioplayer.volume = value/100
+        }
+
+        function controlPos(value){
+            clearInterval(timer)
+            audioplayer.currentTime =value
+            slider.value = value
+            setTimeout(()=>{
+                timer = setInterval(()=>{
+                    slider.max = audioplayer.duration
+                    slider.value = audioplayer.currentTime
+                }, 1000)
+            }, 1000)
+        }
+    </script>
+</body>
+</html>
